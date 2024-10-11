@@ -1,0 +1,55 @@
+services:
+   namenode:
+      image: apache/hadoop:3.4
+      container_name: hadoop-namenode
+      hostname: namenode
+      command: [ "hdfs", "namenode" ]
+      ports:
+         - 9870:9870
+         - 9000:9000
+      environment: &environment
+         ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+         CORE-SITE.XML_fs.default.name: "hdfs://namenode"
+         HADOOP_HOME: "/opt/hadoop"
+      volumes:
+         - ../data:/opt/hadoop/data
+      depends_on:
+         - resourcemanager
+         - nodemanager
+   datanode-1:
+      image: apache/hadoop:3.4
+      container_name: hadoop-datanode1
+      command: [ "hdfs", "datanode" ]
+      environment:
+         ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+         CORE-SITE.XML_fs.default.name: "hdfs://namenode"
+         HADOOP_HOME: "/opt/hadoop"
+      depends_on:
+         - namenode
+   datanode-2:
+      image: apache/hadoop:3.4
+      container_name: hadoop-datanode1
+      command: [ "hdfs", "datanode" ]
+      environment:
+         ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+         CORE-SITE.XML_fs.default.name: "hdfs://namenode"
+         HADOOP_HOME: "/opt/hadoop"
+      depends_on:
+         - namenode
+   resourcemanager:
+      image: apache/hadoop:3.4
+      container_name: hadoop-resourcemanager
+      hostname: resourcemanager
+      command: [ "yarn", "resourcemanager" ]
+      ports:
+         - 8088:8088
+      volumes:
+         - ./test.sh:/opt/test.sh
+   nodemanager:
+      image: apache/hadoop:3.4
+      container_name: hadoop-nodemanager
+      command: [ "yarn", "nodemanager" ]
+      environment:
+         YARN-SITE.XML_yarn.resourcemanager.hostname: "resourcemanager"
+      depends_on:
+         - resourcemanager

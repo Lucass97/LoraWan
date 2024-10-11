@@ -1,0 +1,53 @@
+services:
+   namenode:
+      image: apache/hadoop:3.4
+      container_name: hadoop-namenode
+      hostname: namenode
+      command: ["hdfs", "namenode"]
+      ports:
+        - 9870:9870
+        - 8020:8020
+      environment: &environment
+         - ENSURE_NAMENODE_DIR="/tmp/hadoop-root/dfs/name"
+         - CORE-SITE.XML_fs.defaultFS="hdfs://namenode"
+         - CORE-SITE.XML_fs.default.name="hdfs://namenode"
+         - HDFS-SITE.XML_dfs.namenode.rpc-address="namenode:8020"
+         - HDFS-SITE.XML_dfs.replication="2"
+         - MAPRED-SITE.XML_mapreduce.framework.name="yarn"
+      volumes:
+        - ../../data:/opt/hadoop/data
+   datanode-1:
+      image: apache/hadoop:3.4
+      container_name: hadoop-datanode1
+      command: ["hdfs", "datanode"]
+      environment: *environment
+      depends_on:
+         - namenode
+         - resourcemanager
+   datanode-2:
+      image: apache/hadoop:3.4
+      container_name: hadoop-datanode2
+      command: ["hdfs", "datanode"]
+      environment: *environment
+      depends_on:
+         - namenode
+         - resourcemanager
+   resourcemanager:
+      image: apache/hadoop:3.4
+      container_name: hadoop-resourcemanager
+      hostname: resourcemanager
+      command: ["yarn", "resourcemanager"]
+      ports:
+         - 8088:8088
+      depends_on:
+         - namenode
+   nodemanager:
+      image: apache/hadoop:3.4
+      container_name: hadoop-nodemanager
+      command: ["yarn", "nodemanager"]
+      environment:
+        - YARN-SITE.XML_yarn.resourcemanager.hostname="resourcemanager"
+      depends_on:
+         - resourcemanager
+
+

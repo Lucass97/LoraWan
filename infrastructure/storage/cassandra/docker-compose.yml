@@ -1,0 +1,44 @@
+networks:
+  net:
+
+services:
+ 
+  cassandra1:
+    image: 'bitnami/cassandra:5.0.1'
+    container_name: cassandra1
+    hostname: cassandra1
+    networks:
+      - net
+    ports:
+      - "7000:7000"
+      - "9042:9042"  # Expose native binary CQL port for your apps
+    volumes:
+      - ./schema.cql:/schema.cql  
+    environment: &environment
+      CASSANDRA_SEEDS: "cassandra1,cassandra2"    # The first two nodes will be seeds
+      CASSANDRA_CLUSTER_NAME: StorageLayer
+      MAX_HEAP_SIZE: 1G
+      HEAP_NEWSIZE: 200M
+      CASSANDRA_STARTUP_CQL: schema.cql
+  
+  cassandra2:
+    image: 'bitnami/cassandra:5.0.1'
+    container_name: cassandra2
+    hostname: cassandra2
+    networks:
+      - net
+    ports:
+      - "7001:7000"
+      - "9043:9042"  
+    environment: *environment
+  
+  cassandra3:
+    image: 'bitnami/cassandra:5.0.1'
+    container_name: cassandra3
+    hostname: cassandra3
+    networks:
+      - net
+    ports:
+      - "7002:7000"
+      - "9044:9042"
+    environment: *environment
