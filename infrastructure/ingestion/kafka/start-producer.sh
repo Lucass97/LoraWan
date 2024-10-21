@@ -1,0 +1,1 @@
+python3 producer.py --topic live-data --file ../../../data/generated/indoor_sensor_data.csv

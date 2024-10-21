@@ -1,0 +1,15 @@
+{
+  "name": "streaming-proxy",
+  "version": "1.0.0",
+  "description": "streaming proxy",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Luca Gregori",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1",
+    "kafkajs": "^2.2.4"
+  }
+}

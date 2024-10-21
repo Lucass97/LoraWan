@@ -9,18 +9,22 @@ services:
         - 8020:8020
       environment: &environment
          - ENSURE_NAMENODE_DIR="/tmp/hadoop-root/dfs/name"
-         - CORE-SITE.XML_fs.defaultFS="hdfs://namenode"
-         - CORE-SITE.XML_fs.default.name="hdfs://namenode"
-         - HDFS-SITE.XML_dfs.namenode.rpc-address="namenode:8020"
+         - CORE-SITE.XML_fs.defaultFS="hdfs://hadoop-namenode.shared-net"
+         - CORE-SITE.XML_fs.default.name="hdfs://hadoop-namenode.shared-net"
+         - HDFS-SITE.XML_dfs.namenode.rpc-address="hadoop-namenode.shared-net:8020"
          - HDFS-SITE.XML_dfs.replication="2"
          - MAPRED-SITE.XML_mapreduce.framework.name="yarn"
-      volumes:
-        - ../../data:/opt/hadoop/data
+      networks:
+         - hadoop-net
+         - shared-net
    datanode-1:
       image: apache/hadoop:3.4
       container_name: hadoop-datanode1
       command: ["hdfs", "datanode"]
       environment: *environment
+      networks:
+         - hadoop-net
+         - shared-net
       depends_on:
          - namenode
          - resourcemanager
@@ -29,6 +33,9 @@ services:
       container_name: hadoop-datanode2
       command: ["hdfs", "datanode"]
       environment: *environment
+      networks:
+         - hadoop-net
+         - shared-net
       depends_on:
          - namenode
          - resourcemanager
@@ -39,6 +46,9 @@ services:
       command: ["yarn", "resourcemanager"]
       ports:
          - 8088:8088
+      networks:
+         - hadoop-net
+         - shared-net
       depends_on:
          - namenode
    nodemanager:
@@ -47,7 +57,14 @@ services:
       command: ["yarn", "nodemanager"]
       environment:
         - YARN-SITE.XML_yarn.resourcemanager.hostname="resourcemanager"
+      networks:
+         - hadoop-net
+         - shared-net
       depends_on:
          - resourcemanager
 
-
+networks:
+  hadoop-net:
+    driver: bridge
+  shared-net:
+    external: true

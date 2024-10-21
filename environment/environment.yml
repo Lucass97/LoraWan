@@ -1,0 +1,7 @@
+name: IoT-LoraWAN
+dependencies:
+  - python=3.11.10
+  - pip
+  - pip:
+    - -r requirements.txt
+  - openjdk
