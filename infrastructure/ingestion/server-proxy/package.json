@@ -2,11 +2,11 @@
   "name": "streaming-proxy",
   "version": "1.0.0",
   "description": "streaming proxy",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Luca Gregori",
+  "author": "Luca Gregori, Alessandra Marchi",
   "license": "ISC",
   "dependencies": {
     "express": "^4.21.1",

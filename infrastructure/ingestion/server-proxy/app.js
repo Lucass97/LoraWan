@@ -15,7 +15,7 @@ app.post('/ricevi', async (req, res) => {
     res.status(200).send('Messaggio inviato a Kafka!');
 });
 
-app.listen(3000, async () => {
+app.listen(80, async () => {
     await producer.connect();
     console.log('Server in ascolto su http://localhost:3000');
 });
