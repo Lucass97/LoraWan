@@ -1,70 +1,85 @@
 services:
-   namenode:
-      image: apache/hadoop:3.4
-      container_name: hadoop-namenode
-      hostname: namenode
-      command: ["hdfs", "namenode"]
-      ports:
-        - 9870:9870
-        - 8020:8020
-      environment: &environment
-         - ENSURE_NAMENODE_DIR="/tmp/hadoop-root/dfs/name"
-         - CORE-SITE.XML_fs.defaultFS="hdfs://hadoop-namenode.shared-net"
-         - CORE-SITE.XML_fs.default.name="hdfs://hadoop-namenode.shared-net"
-         - HDFS-SITE.XML_dfs.namenode.rpc-address="hadoop-namenode.shared-net:8020"
-         - HDFS-SITE.XML_dfs.replication="2"
-         - MAPRED-SITE.XML_mapreduce.framework.name="yarn"
-      networks:
-         - hadoop-net
-         - shared-net
-   datanode-1:
-      image: apache/hadoop:3.4
-      container_name: hadoop-datanode1
-      command: ["hdfs", "datanode"]
-      environment: *environment
-      networks:
-         - hadoop-net
-         - shared-net
-      depends_on:
-         - namenode
-         - resourcemanager
-   datanode-2:
-      image: apache/hadoop:3.4
-      container_name: hadoop-datanode2
-      command: ["hdfs", "datanode"]
-      environment: *environment
-      networks:
-         - hadoop-net
-         - shared-net
-      depends_on:
-         - namenode
-         - resourcemanager
-   resourcemanager:
-      image: apache/hadoop:3.4
-      container_name: hadoop-resourcemanager
-      hostname: resourcemanager
-      command: ["yarn", "resourcemanager"]
-      ports:
-         - 8088:8088
-      networks:
-         - hadoop-net
-         - shared-net
-      depends_on:
-         - namenode
-   nodemanager:
-      image: apache/hadoop:3.4
-      container_name: hadoop-nodemanager
-      command: ["yarn", "nodemanager"]
-      environment:
-        - YARN-SITE.XML_yarn.resourcemanager.hostname="resourcemanager"
-      networks:
-         - hadoop-net
-         - shared-net
-      depends_on:
-         - resourcemanager
+  namenode:
+    image: apache/hadoop:3.4
+    container_name: hadoop-namenode
+    hostname: namenode
+    command: ["hdfs", "namenode"]
+    ports:
+      - 9870:9870
+      - 8020:8020
+    environment: &environment
+      - ENSURE_NAMENODE_DIR="/tmp/hadoop-root/dfs/name"
+      - CORE-SITE.XML_fs.defaultFS="hdfs://hadoop-namenode.shared-net"
+      - CORE-SITE.XML_fs.default.name="hdfs://hadoop-namenode.shared-net"
+      - HDFS-SITE.XML_dfs.namenode.rpc-address="hadoop-namenode.shared-net:8020"
+      - HDFS-SITE.XML_dfs.replication="2"
+      - MAPRED-SITE.XML_mapreduce.framework.name="yarn"
+    networks:
+      - hadoop-net
+      - shared-net
+    volumes:
+      - namenode-data:/tmp/hadoop-root/dfs/name
+
+  datanode-1:
+    image: apache/hadoop:3.4
+    container_name: hadoop-datanode1
+    command: ["hdfs", "datanode"]
+    environment: *environment
+    networks:
+      - hadoop-net
+      - shared-net
+    depends_on:
+      - namenode
+      - resourcemanager
+    volumes:
+      - datanode1-data:/tmp/hadoop-root/dfs/data
+
+  datanode-2:
+    image: apache/hadoop:3.4
+    container_name: hadoop-datanode2
+    command: ["hdfs", "datanode"]
+    environment: *environment
+    networks:
+      - hadoop-net
+      - shared-net
+    depends_on:
+      - namenode
+      - resourcemanager
+    volumes:
+      - datanode2-data:/tmp/hadoop-root/dfs/data
+
+  resourcemanager:
+    image: apache/hadoop:3.4
+    container_name: hadoop-resourcemanager
+    hostname: resourcemanager
+    command: ["yarn", "resourcemanager"]
+    ports:
+      - 8088:8088
+    networks:
+      - hadoop-net
+      - shared-net
+    depends_on:
+      - namenode
+
+  nodemanager:
+    image: apache/hadoop:3.4
+    container_name: hadoop-nodemanager
+    command: ["yarn", "nodemanager"]
+    environment:
+      - YARN-SITE.XML_yarn.resourcemanager.hostname="resourcemanager"
+    networks:
+      - hadoop-net
+      - shared-net
+    depends_on:
+      - resourcemanager
 
 networks:
   hadoop-net:
     driver: bridge
   shared-net:
     external: true
+
+volumes:
+  namenode-data:
+  datanode1-data:
+  datanode2-data:
