@@ -9,7 +9,7 @@ services:
       DOCKER_INFLUXDB_INIT_USERNAME_FILE: /run/secrets/admin-username
       DOCKER_INFLUXDB_INIT_PASSWORD_FILE: /run/secrets/admin-password 
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN_FILE: /run/secrets/admin-token
-      DOCKER_INFLUXDB_INIT_ORG: docs 
+      DOCKER_INFLUXDB_INIT_ORG: RomaTre 
       DOCKER_INFLUXDB_INIT_BUCKET: home
     secrets:
       - admin-username
@@ -22,6 +22,9 @@ services:
       - type: volume
         source: influxdb2-config
         target: /etc/influxdb2
+    networks:
+      - shared-net
+
 secrets:
   admin-username:
     file: admin-username
@@ -29,6 +32,11 @@ secrets:
     file: admin-password
   admin-token:
     file: admin-token
+
 volumes:
   influxdb2-data:
   influxdb2-config:
+
+networks:
+  shared-net:
+    external: true
