@@ -1,0 +1,26 @@
+apiVersion: 1
+
+datasources:
+  - uid: de2g6kmijy03kd
+    name: influxdb
+    type: influxdb
+    typeName: InfluxDB
+    access: proxy
+    url: http://influxdb2:8086
+    basicAuth: true
+    basicAuthUser: admin
+    isDefault: true
+    editable: true
+    user: "admin"
+    database: "home"
+    secureJsonData:
+      basicAuthPassword: adminadmin
+      token: admin_admin_123456789
+    secureJsonFields:
+      basicAuthPassword: true
+      token: true
+    jsonData:
+      httpMode: POST
+      defaultBucket: home
+      organization: RomaTre
+      version: Flux
