@@ -132,6 +132,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -404,14 +405,13 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "ARMELLINI",
           "value": "ARMELLINI"
         },
@@ -438,11 +438,13 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
+            "1A",
             "1B"
           ],
           "value": [
+            "1A",
             "1B"
           ]
         },
@@ -470,13 +472,13 @@
     ]
   },
   "time": {
-    "from": "2024-11-13T17:00:28.721Z",
-    "to": "2024-11-13T20:30:57.599Z"
+    "from": "2024-11-13T17:47:06.674Z",
+    "to": "2024-11-13T22:32:59.615Z"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "IoT-LoraWAN",
   "uid": "be2jgukzn90xsf",
-  "version": 3,
+  "version": 6,
   "weekStart": ""
 }

@@ -1,0 +1,85 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: air_quality
+      folder: ALERT
+      interval: 1m
+      rules:
+        - uid: ae3xfzj7n0idca
+          title: CO2 Attention Alert
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: de2g6kmijy03kd
+              model:
+                intervalMs: 1000
+                maxDataPoints: 43200
+                query: "from(bucket: \"home\")\r\n  |> range(start: -5m)  // Controlla gli ultimi 5 minuti (modifica a seconda della frequenza con cui vuoi verificare)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"sensor_data\")  // Sostituisci con il nome corretto della misura\r\n  |> filter(fn: (r) => r[\"_field\"] == \"co2\")  // Sostituisci con il campo corretto della CO2\r\n  |> filter(fn: (r) => r[\"_value\"] > 1500)  // Condizione che la CO2 sia maggiore di 1500\r\n  |> aggregateWindow(every: 1m, fn: max)  // Assicurati che i dati siano aggregati ogni 1 minuto (o un altro intervallo)\r\n  |> yield(name: \"CO2_above_1500\")"
+                refId: A
+            - refId: B
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 1500
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
+          annotations: {}
+          labels: {}
+          isPaused: false
+          notification_settings:
+            receiver: Indirizzi ALERT
