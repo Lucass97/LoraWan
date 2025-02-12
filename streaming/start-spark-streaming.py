@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 
+from dotenv import dotenv_values
+
 from pyspark.sql import SparkSession
-from pyspark.sql import functions as F
-
 from influxdb_client import InfluxDBClient
-from influxdb_client.client.write_api import SYNCHRONOUS
 
-from misc.constants import *
 from storage.influxdb import *
 from processing.processing import *
+
+env_vars = dotenv_values("spark.env")
+globals().update(env_vars)
 
 
 # Initialize the SparkSession
 spark = SparkSession \
     .builder \
-    .appName("Flight Streaming Analysis") \
+    .appName("LoraWan") \
     .config("spark.cassandra.connection.host", ','.join(CASSANDRA_CLUSTERS)) \
     .config("spark.cassandra.auth.username", CASSANDRA_USERNAME) \
     .config("spark.cassandra.auth.password", CASSANDRA_PASSWORD) \
@@ -68,6 +69,13 @@ df_correlations = compute_correlations(df_stream=df_stream, window_duration=WIND
 Writing Streaming
 ========================================================================================
 """
+
+df_stream \
+    .writeStream \
+    .outputMode("append") \
+    .foreachBatch(lambda batch_df, batch_id: batch_df.show(100)) \
+    .start() \
+    .awaitTermination()
 
 
 # Write raw data on HDFS
