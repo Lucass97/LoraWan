@@ -1,19 +1,31 @@
 #!/bin/bash
 
-# Output colors
-GREEN="\033[0;32m"
-RED="\033[0;31m"
-YELLOW="\033[1;33m"
-NC="\033[0m"
+SPARK_PACKAGES="com.datastax.spark:spark-cassandra-connector_2.12:3.5.1,com.github.jnr:jnr-posix:3.1.20,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3"
+BASE_PATH="/opt/bitnami/spark/spark-streaming"
+SCRIPT_NAME="start-spark-streaming.py"
+ENV_PATH="../env/spark.env"
+DOCKER_ENV_PATH="${BASE_PATH}/spark.env" 
+COMMON_FUNCTIONS_PATH="../scripts/spark_functions.sh"
+SCRIPT_PATH="$BASE_PATH/$SCRIPT_NAME"
 
-sudo docker exec -u root -it spark-master rm -r /opt/bitnami/spark/misc
-sudo docker exec -u root -it spark-master rm -r /opt/bitnami/spark/storage
-sudo docker exec -u root -it spark-master rm -r /opt/bitnami/spark/processing
+BACKGROUND_EXEC="false"
 
-sudo docker cp ./misc spark-master:/opt/bitnami/spark/misc
-sudo docker cp ./processing spark-master:/opt/bitnami/spark/processing
-sudo docker cp ./storage spark-master:/opt/bitnami/spark/storage
-sudo docker cp ./spark-streaming.py spark-master:/opt/bitnami/spark/spark-streaming.py
+source "${COMMON_FUNCTIONS_PATH}"
 
-sudo docker exec -it spark-master spark-submit \
-    --packages com.datastax.spark:spark-cassandra-connector_2.12:3.5.1,com.github.jnr:jnr-posix:3.1.20,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3 spark-streaming.py
+# Parse command line arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --background) BACKGROUND_EXEC="true"; shift ;;  # Set background execution to true
+        --foreground) BACKGROUND_EXEC="false"; shift ;;  # Set background execution to false
+        *) echo -e "${RED}Unknown option: $1${NC}"; exit 1 ;;  # Handle unknown options
+    esac
+done
+
+# Main script
+
+echo -e "${YELLOW}Starting Spark streaming script...${NC}"
+ensure_folder_exists "$BASE_PATH"
+clear_folder "$BASE_PATH"
+copy_env_file "$ENV_PATH" "$DOCKER_ENV_PATH"
+copy_files "." "$BASE_PATH"
+submit_spark_job "$SPARK_PACKAGES" "$SCRIPT_PATH" "$BACKGROUND_EXEC"
