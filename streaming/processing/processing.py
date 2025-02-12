@@ -39,7 +39,7 @@ def process_sensor_data(df_kafka: DataFrame, df_metadata: DataFrame) -> DataFram
         F.get_json_object(df.value, '$.DevEui').alias('DevEui'),
         F.get_json_object(df.value, '$.deviceName').alias('deviceName'),
         F.get_json_object(df.value, '$.GWInfo[0].gwname').alias('gwname'),
-        F.get_json_object(df.value, '$.GWInfo[0].sendtime').cast('int').alias('sendtime'),
+        F.get_json_object(df.value, '$.GWInfo[0].sendtime').alias('sendtime'),
         F.get_json_object(df.value, '$.parsedPayload.battery_voltage').cast('float').alias('battery_voltage'),
         F.get_json_object(df.value, '$.parsedPayload.door_status').cast('int').alias('door_status'),
         F.get_json_object(df.value, '$.parsedPayload.door_open_times').cast('int').alias('door_open_times'),
@@ -50,8 +50,12 @@ def process_sensor_data(df_kafka: DataFrame, df_metadata: DataFrame) -> DataFram
     # Convert sendtime to timestamp
     df = df.withColumn("sendtime", F.from_unixtime(F.col("sendtime") / 1000).cast("timestamp"))
 
+    df_metadata = df_metadata.withColumnRenamed("DevEui", "DevEui_metadata")
+
     # Perform join with metadata
-    df = df.join(df_metadata, df["DevEui"] == df_metadata["DevEui"], "left")
+    df = df.join(df_metadata, df["DevEui"] == df_metadata["DevEui_metadata"], "left")
+
+    df = df.drop("DevEui_metadata")
 
     return df
 
