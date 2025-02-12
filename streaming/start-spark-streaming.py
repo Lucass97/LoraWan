@@ -99,6 +99,6 @@ df_stats.writeStream \
 df_correlations.writeStream \
     .foreach(saveCorrelationDataToInflux(write_api=write_api)) \
     .trigger(processingTime=WINDOW_DURATION) \
-    .outputMode("update") \
+    .outputMode("complete") \
     .start() \
     .awaitTermination()
