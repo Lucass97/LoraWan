@@ -72,7 +72,7 @@ Writing Streaming
 
 # Write raw data on HDFS
 df_stream.writeStream \
-    .format("csv") \
+    .format("parquet") \
     .outputMode("append") \
     .option("path", RAW_INDOOR_SENSOR_HDFS_PATH) \
     .option("checkpointLocation", CHECKPOINT_RAW_INDOOR_SENSOR_HDFS_PATH) \
