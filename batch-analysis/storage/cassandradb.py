@@ -1,5 +1,5 @@
 
-def save_to_cassandra(df, table_name, keyspace="batchkeyspace"):
+def save_to_cassandra(df, table_name: str, keyspace: str = CASSANDRA_BATCHKEYSPACE) -> None:
     """
     Saves a PySpark DataFrame to a Cassandra table.
 
@@ -24,7 +24,3 @@ def save_to_cassandra(df, table_name, keyspace="batchkeyspace"):
       .options(table=table_name, keyspace=keyspace) \
       .save()
       
-      
-      
-def heat_index_calculation(df):
-    return
