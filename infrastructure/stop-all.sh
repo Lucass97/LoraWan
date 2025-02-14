@@ -14,6 +14,7 @@ compose_files=(
     'ingestion/kafka/docker-compose.yml'
 )
 
+
 # Function to delete Cassandra volumes
 delete_cassandra_volumes() {
     read -p "$(echo -e "${YELLOW}Do you want to delete the Cassandra volumes? [y/N] ${NC}")" confirm
@@ -78,13 +79,26 @@ stop_services() {
     echo -e "${GREEN}All services have been stopped successfully!${NC}"
 }
 
+# Function to stop and remove the server-proxy container
+stop_and_remove_server_proxy() {
+    echo -e "${YELLOW}Stopping and removing server-proxy container...${NC}"
+
+    # Stop the container
+    sudo docker stop server-proxy \
+        && echo -e "${GREEN}Server-proxy container stopped successfully!${NC}" \
+        || echo -e "${RED}Failed to stop server-proxy container.${NC}"
+
+    # Remove the container
+    sudo docker rm server-proxy \
+        && echo -e "${GREEN}Server-proxy container removed successfully!${NC}" \
+        || echo -e "${RED}Failed to remove server-proxy container.${NC}"
+}
+
+
+# Main script
 
 stop_services
-
-echo -e "${YELLOW}Stopping server-proxy...${NC}"
-sudo docker stop server-proxy
-sudo docker rm server-proxy
-
+stop_and_remove_server_proxy
 delete_cassandra_volumes
 delete_hadoop_volumes
 delete_influxdb_volumes

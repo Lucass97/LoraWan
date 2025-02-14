@@ -4,39 +4,81 @@ CREATE KEYSPACE IF NOT EXISTS BatchKeySpace WITH replication = {'class':'SimpleS
 
 //Create tables
 
-CREATE TABLE IF NOT EXISTS BatchKeySpace.indoor_sensor_data_synthetic("TIMESTAMP" timestamp, "SENSOR_ID" int,
-    "TEMPERATURE" float, "HUMIDITY" float, "PIR" float, "lighting" float,
-    "CO2" float, "TVOC" float, "BAROMETRIC_PRESSURE" float, 
-    PRIMARY KEY ("TIMESTAMP", "SENSOR_ID"));
+CREATE TABLE IF NOT EXISTS BatchKeySpace.stats_by_year_week(
+    YEAR int, 
+    WEEK int, 
+    DevEui text,
+    AVG_TEMPERATURE float, 
+    MAX_TEMPERATURE float, 
+    MIN_TEMPERATURE float, 
+    STDDEV_TEMPERATURE float,
+    AVG_HUMIDITY float, 
+    MAX_HUMIDITY float, 
+    MIN_HUMIDITY float, 
+    STDDEV_HUMIDITY float,
+    AVG_CO2 float, 
+    MAX_CO2 float, 
+    MIN_CO2 float, 
+    STDDEV_CO2 float,
+    AVG_LIGHT_LEVEL float, 
+    MAX_LIGHT_LEVEL float, 
+    MIN_LIGHT_LEVEL float, 
+    STDDEV_LIGHT_LEVEL float,
+    AVG_PRESSURE float, 
+    MAX_PRESSURE float, 
+    MIN_PRESSURE float, 
+    STDDEV_PRESSURE float,
+    AVG_TVOC float, 
+    MAX_TVOC float, 
+    MIN_TVOC float, 
+    STDDEV_TVOC float,
+    PRIMARY KEY (YEAR, WEEK)
+);
 
-CREATE TABLE IF NOT EXISTS BatchKeySpace.stats_by_year("YEAR" int,
-    "AVG_TEMPERATURE" float, "MAX_TEMPERATURE" float, "MIN_TEMPERATURE" float,
-    "AVG_HUMIDITY" float, "MAX_HUMIDITY" float, "MIN_HUMIDITY" float,
-    "AVG_CO2" float, "MAX_CO2" float, "MIN_CO2" float,
-    "AVG_LIGHTING" float, "MAX_LIGHTING" float, "MIN_LIGHTING" float, 
-    "AVG_B_PRESSURE" float, "MAX_B_PRESSURE" float, "MIN_B_PRESSURE" float,
-    "AVG_TVOC" float, "MAX_TVOC" float, "MIN_TVOC" float,
-    "AVG_PIR" float, "MAX_PIR" float, "MIN_PIR" float,
-    PRIMARY KEY ("YEAR"));
 
-CREATE TABLE IF NOT EXISTS BatchKeySpace.stats_by_year_month("YEAR" int, "MONTH" int,
-    "AVG_TEMPERATURE" float, "MAX_TEMPERATURE" float, "MIN_TEMPERATURE" float,
-    "AVG_HUMIDITY" float, "MAX_HUMIDITY" float, "MIN_HUMIDITY" float,
-    "AVG_CO2" float, "MAX_CO2" float, "MIN_CO2" float,
-    "AVG_LIGHTING" float, "MAX_LIGHTING" float, "MIN_LIGHTING" float, 
-    "AVG_B_PRESSURE" float, "MAX_B_PRESSURE" float, "MIN_B_PRESSURE" float,
-    "AVG_TVOC" float, "MAX_TVOC" float, "MIN_TVOC" float,
-    "AVG_PIR" float, "MAX_PIR" float, "MIN_PIR" float,
-    PRIMARY KEY (("YEAR"), "MONTH"));
+CREATE TABLE IF NOT EXISTS BatchKeySpace.stats_by_class_year_week(
+    CLASSROOM text, 
+    INSTITUTE text, 
+    DevEui text, 
+    YEAR int, 
+    WEEK int,
+    AVG_TEMPERATURE float, 
+    MAX_TEMPERATURE float, 
+    MIN_TEMPERATURE float, 
+    STDDEV_TEMPERATURE float,
+    AVG_HUMIDITY float, 
+    MAX_HUMIDITY float, 
+    MIN_HUMIDITY float, 
+    STDDEV_HUMIDITY float,
+    AVG_CO2 float, 
+    MAX_CO2 float, 
+    MIN_CO2 float, 
+    STDDEV_CO2 float,
+    AVG_LIGHT_LEVEL float, 
+    MAX_LIGHT_LEVEL float, 
+    MIN_LIGHT_LEVEL float, 
+    STDDEV_LIGHT_LEVEL float,
+    AVG_PRESSURE float, 
+    MAX_PRESSURE float, 
+    MIN_PRESSURE float, 
+    STDDEV_PRESSURE float,
+    AVG_TVOC float, 
+    MAX_TVOC float, 
+    MIN_TVOC float, 
+    STDDEV_TVOC float,
+    PRIMARY KEY (CLASSROOM, INSTITUTE, YEAR, WEEK)
+);
 
-CREATE TABLE IF NOT EXISTS BatchKeySpace.stats_by_year_month_day("YEAR" int, "MONTH" int, "DAY" int,
-    "AVG_TEMPERATURE" float, "MAX_TEMPERATURE" float, "MIN_TEMPERATURE" float,
-    "AVG_HUMIDITY" float, "MAX_HUMIDITY" float, "MIN_HUMIDITY" float,
-    "AVG_CO2" float, "MAX_CO2" float, "MIN_CO2" float,
-    "AVG_LIGHTING" float, "MAX_LIGHTING" float, "MIN_LIGHTING" float, 
-    "AVG_B_PRESSURE" float, "MAX_B_PRESSURE" float, "MIN_B_PRESSURE" float,
-    "AVG_TVOC" float, "MAX_TVOC" float, "MIN_TVOC" float,
-    "AVG_PIR" float, "MAX_PIR" float, "MIN_PIR" float,
-    PRIMARY KEY (("YEAR"), "MONTH", "DAY"));
+
+ALTER TABLE BatchKeySpace.stats_by_class_year_week
+    WITH custom_properties = {
+    'comment': 'Statistics computed on sensor data, aggregated by classroom, institute, year, and week.'
+};
+
+ALTER TABLE BatchKeySpace.stats_by_year_week
+    WITH custom_properties = {
+    'comment': 'Statistics computed on sensor data, aggregated by year, and week.'
+};
+
 
 DESCRIBE TABLES;

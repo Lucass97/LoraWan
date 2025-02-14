@@ -11,8 +11,10 @@ compose_files=(
     'spark/docker-compose.yml'
     'storage/cassandra/docker-compose.yml'
     'storage/influxdb/docker-compose.yml'
+    'storage/postgres/docker-compose.yml'
     'ingestion/kafka/docker-compose.yml'
 )
+
 
 # Function to strating all services
 start_services() {
@@ -41,34 +43,67 @@ start_server_proxy() {
     echo -e "${GREEN}Server-proxy started successfully!${NC}"
 }
 
-# Creating the docker net
-echo -e "${YELLOW}Creating shared Docker network...${NC}"
-sudo docker network create shared-net || echo -e "${YELLOW}Network 'shared-net' already exists.${NC}"
+# Function to create HDFS directories and set permissions
+create_hdfs_directories() {
+    echo -e "${YELLOW}Creating useful folders on HDFS...${NC}"
+    
+    directories=(
+        "/iot-lorawan"
+        "/iot-lorawan/raw"
+        "/iot-lorawan/metadata"
+        "/iot-lorawan/generated"
+        "/iot-lorawan/checkpoints"
+    )
+    
+    for dir in "${directories[@]}"; do
+        echo -e -n "${GREEN}"
+        sudo docker exec -it hadoop-namenode hadoop fs -mkdir "$dir"
 
-# Starting services
+        sudo docker exec -it hadoop-namenode hadoop fs -chmod 777 "$dir" \
+            && echo -e "${GREEN}Set permissions for $dir${NC}" \
+            || echo -e "${RED}Failed to set permissions for $dir${NC}"
+    done
+}
+
+# Function to create a Docker network if it doesn't already exist
+create_docker_network() {
+    local network_name="shared-net"
+
+    echo -e "${YELLOW}Creating Docker network: $network_name...${NC}"
+    
+    if sudo docker network ls | grep -q "$network_name"; then
+        echo -e "${YELLOW}Network '$network_name' already exists.${NC}"
+    else
+        sudo docker network create "$network_name" \
+            && echo -e "${GREEN}Docker network '$network_name' created successfully!${NC}" \
+            || echo -e "${RED}Failed to create Docker network '$network_name'.${NC}"
+    fi
+}
+
+# Function to initialize the Cassandra database
+init_cassandra_db() {
+    
+    local script_path="$1"
+
+    echo -e "${YELLOW}Initializing Cassandra database...${NC}"
+
+    echo -e "${YELLOW}Waiting for 180 seconds before proceeding...${NC}"
+    sleep 180
+    
+    if [ -f "$script_path" ]; then
+        bash "$script_path" \
+            && echo -e "${GREEN}Cassandra database initialized successfully!${NC}" \
+            || echo -e "${RED}Failed to initialize Cassandra database.${NC}"
+    else
+        echo -e "${RED}Error: Cassandra initialization script not found at $script_path.${NC}"
+    fi
+}
+
+
+# main script
+
+create_docker_network
 start_services
-
-# Building & starting the server-proxy
 start_server_proxy
-
-# Creating useful folder on HDFS
-echo -e "${YELLOW}Creating useful folder on HDFS...${NC}"
-sudo docker exec -it hadoop-namenode hadoop fs -mkdir /iot-lorawan
-sudo docker exec -it hadoop-namenode hadoop fs -mkdir /iot-lorawan/raw
-sudo docker exec -it hadoop-namenode hadoop fs -mkdir /iot-lorawan/metadata
-sudo docker exec -it hadoop-namenode hadoop fs -mkdir /iot-lorawan/generated
-sudo docker exec -it hadoop-namenode hadoop fs -chmod 777 /iot-lorawan/raw
-sudo docker exec -it hadoop-namenode hadoop fs -chmod 777 /iot-lorawan/metadata
-sudo docker exec -it hadoop-namenode hadoop fs -chmod 777 /iot-lorawan/generated
-
-echo -e "${YELLOW}Creating checkpoints folder on HDFS...${NC}"
-sudo docker exec -it hadoop-namenode hadoop fs -mkdir /iot-lorawan/checkpoints
-sudo docker exec -it hadoop-namenode hadoop fs -chmod 777 /iot-lorawan/checkpoints
-
-echo -e "${YELLOW}Waiting for 120 seconds before proceeding...${NC}"
-sleep 120
-
-# Init cassandra
-echo -e "${YELLOW}Initializing Cassandra database...${NC}"
-bash storage/cassandra/create-db.sh
-echo -e "${GREEN}Cassandra database initialized successfully!${NC}"
+create_hdfs_directories
+init_cassandra_db "storage/cassandra/create-db.sh"
