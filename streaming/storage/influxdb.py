@@ -1,6 +1,5 @@
 from influxdb_client import Point
 
-from misc.constants import *
 
 def saveRawDataToInflux(write_api):
     

@@ -1,8 +1,6 @@
 from pyspark.sql import functions as F
 from pyspark.sql import DataFrame
 
-from misc.constants import *
-
 
 def process_sensor_data(df_kafka: DataFrame, df_metadata: DataFrame) -> DataFrame:
     """
