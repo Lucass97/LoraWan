@@ -1,0 +1,36 @@
+services:
+  postgres:
+    container_name: postgres:17.3
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: iot-lorawan
+    volumes:
+      - postgres-data:/data/postgres
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres-net
+      - shared-net
+    restart: unless-stopped
+
+  init-postgres:
+    image: postgres:17.3
+    depends_on:
+      - postgres
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sh:/init.sh
+    command: ["sh", "/init.sh"]
+
+
+networks:
+  postgres-net:
+    driver: bridge
+  shared-net:
+    external: true
+  
+volumes:
+  postgres-data:
