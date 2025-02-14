@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
-from dotenv import dotenv_values
-
 from pyspark.sql import SparkSession
 from influxdb_client import InfluxDBClient
 
 from storage.influxdb import *
 from processing.processing import *
+from misc.parser import parse_args
+from misc.env import load_environment
 
-env_vars = dotenv_values("spark.env")
-globals().update(env_vars)
+args = parse_args()
+
+load_environment(args.env_file)
 
 
 # Initialize the SparkSession
@@ -70,12 +71,12 @@ Writing Streaming
 ========================================================================================
 """
 
-df_stream \
+"""df_stream \
     .writeStream \
     .outputMode("append") \
     .foreachBatch(lambda batch_df, batch_id: batch_df.show(100)) \
     .start() \
-    .awaitTermination()
+    .awaitTermination()"""
 
 
 # Write raw data on HDFS
