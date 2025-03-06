@@ -1,27 +1,29 @@
-# TODO
-
-
 from pyspark.sql import SparkSession
+from misc.env import load_environment
+from misc.parser import parse_args
 
-from misc.constants import *
+args = parse_args()
 
-# Creazione di una sessione Spark
+load_environment(args.env_file)
+
 spark = SparkSession.builder \
     .appName("Raw Downloader") \
     .getOrCreate()
 
 local_path = "iot-lorawan/raw/indoor_sensor_data.csv"
 
+
 try:
-    # Leggi il file da HDFS
-    df = spark.read.text(RAW_INDOOR_SENSOR_HDFS_PATH)
+    df = spark.read.parquet(RAW_INDOOR_SENSOR_HDFS_PATH)
 
-    # Salva il DataFrame nel filesystem locale
-    df.write.mode("overwrite").text(local_path)
+    df_ordered = df.orderBy("sendtime")
 
-    print(f"File scaricato con successo da HDFS: {RAW_INDOOR_SENSOR_HDFS_PATH} a {local_path}")
+    df_ordered.coalesce(1).write.mode("overwrite").option("header", "true").csv(local_path)
+
+    print(f"File successfully downloaded from HDFS: {RAW_INDOOR_SENSOR_HDFS_PATH} to {local_path}")
+
 except Exception as e:
-    print(f"Si è verificato un errore durante il download: {e}")
+    print(f"An error occurred during the download: {e}")
+
 finally:
-    # Ferma la sessione Spark
     spark.stop()
