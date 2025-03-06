@@ -62,6 +62,6 @@ CREATE TABLE IF NOT EXISTS stats_by_class_year_week (
     PRIMARY KEY (classroom, institute, year, week)
 );
 
--- Aggiunta di commenti alle tabelle
+
 COMMENT ON TABLE stats_by_class_year_week IS 'Statistics computed on sensor data, aggregated by classroom, institute, year, and week.';
 COMMENT ON TABLE stats_by_year_week IS 'Statistics computed on sensor data, aggregated by year, and week.';
