@@ -54,24 +54,27 @@ copy_files() {
         || echo -e "${RED}Failed to copy files to $destination_path${NC}"
 }
 
+
 # Function to submit a spark job
 submit_spark_job() {
     local spark_packages="$1"
     local script_path="$2"
     local background_flag="$3"
     local env_file="$4"
+    shift 4  # Move the arguments in an extra array
+    local extra_args=("$@")
 
-    echo -e "${YELLOW}Submitting Spark job: $script_path with packages: $spark_packages and env file: $env_file...${NC}"
+    echo -e "${YELLOW}Submitting Spark job: $script_path with packages: $spark_packages, env file: $env_file, and extra args: ${extra_args[*]} ...${NC}"
 
     if [ "$background_flag" == "true" ]; then
         # Submit Spark job in the background using nohup
         sudo docker exec -d spark-master nohup spark-submit \
-            --packages "$spark_packages" "$script_path" --env-file "$env_file" > /dev/null 2>&1 & \
+            --packages "$spark_packages" "$script_path" --env-file "$env_file" "${extra_args[@]}" > /dev/null 2>&1 &
         echo -e "${GREEN}Spark job submitted in the background successfully!${NC}"
     else
         # Submit Spark job in the foreground
         sudo docker exec -it spark-master spark-submit \
-            --packages "$spark_packages" "$script_path" --env-file "$env_file" \
+            --packages "$spark_packages" "$script_path" --env-file "$env_file" "${extra_args[@]}" \
             && echo -e "${GREEN}Spark job submitted successfully!${NC}" \
             || echo -e "${RED}Failed to submit Spark job.${NC}"
     fi
