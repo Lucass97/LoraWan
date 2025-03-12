@@ -4,9 +4,9 @@ from pyspark.sql import SparkSession
 
 from processing.processing import *
 from misc.env import load_environment
-from misc.parser import parse_args
+from misc.parser import parse_batch_args
 
-args = parse_args()
+args = parse_batch_args()
 
 load_environment(args.env_file)
 
@@ -61,10 +61,10 @@ Writing Streaming
 """
 
 
-save_to_cassandra(stats_by_class_year_week, "stats_by_class_year_week")
-save_to_cassandra(stats_by_year_week, "stats_by_year_week")
+#save_to_cassandra(stats_by_class_year_week, "stats_by_class_year_week")
+#save_to_cassandra(stats_by_year_week, "stats_by_year_week")
 
-save_to_postgres(df, "stats_by_class_year_week", POSTGRES_PROPERTIES)
+save_to_postgres(stats_by_class_year_week, "stats_by_class_year_week", POSTGRES_PROPERTIES)
 
 
 spark.stop()

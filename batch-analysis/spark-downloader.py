@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
+
 from pyspark.sql import SparkSession
 from misc.env import load_environment
-from misc.parser import parse_args
+from misc.parser import parse_downloader_args
 
-args = parse_args()
+args = parse_downloader_args()
 
 load_environment(args.env_file)
 
