@@ -41,5 +41,5 @@ ensure_folder_exists "$BASE_PATH"
 clear_folder "$BASE_PATH"
 copy_env_file "$LOCAL_ENV_PATH" "$DOCKER_ENV_PATH"
 copy_files "." "$BASE_PATH"
-submit_spark_job "$SPARK_PACKAGES" "$SCRIPT_PATH" "$BACKGROUND_EXEC" "$DOCKER_ENV_PATH"
+submit_spark_job "$SPARK_PACKAGES" "$SCRIPT_PATH" "$BACKGROUND_EXEC" "$DOCKER_ENV_PATH" --profile iaq
 copy_from_container "/opt/bitnami/spark/iot-lorawan/raw/indoor_sensor_data.csv" "../data/raw/"
