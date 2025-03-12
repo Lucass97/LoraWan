@@ -161,4 +161,9 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# infrastructure
 infrastructure/ingestion/server-proxy/node_modules
+
+# Data
+data/raw
+data/generated
