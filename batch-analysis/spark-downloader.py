@@ -18,7 +18,7 @@ local_path = "iot-lorawan/raw/indoor_sensor_data.csv"
 try:
     df = spark.read.parquet(RAW_INDOOR_SENSOR_HDFS_PATH)
 
-    df_ordered = df.orderBy("sendtime")
+    df_ordered = df.filter(args.profile).orderBy(['DevEui','sendtime'])
 
     df_ordered.coalesce(1).write.mode("overwrite").option("header", "true").csv(local_path)
 
