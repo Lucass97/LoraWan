@@ -10,7 +10,6 @@ args = parse_batch_args()
 
 load_environment(args.env_file)
 
-from storage.cassandradb import save_to_cassandra
 from storage.postgresdb import save_to_postgres
 
 POSTGRES_PROPERTIES = {
@@ -22,10 +21,7 @@ POSTGRES_PROPERTIES = {
 
 spark = SparkSession \
     .builder \
-    .appName("LoraWan") \
-    .config("spark.cassandra.connection.host", ','.join(CASSANDRA_CLUSTERS)) \
-    .config("spark.cassandra.auth.username", CASSANDRA_USERNAME) \
-    .config("spark.cassandra.auth.password", CASSANDRA_PASSWORD) \
+    .appName("IoT-LoraWAN Batch Analysis") \
     .getOrCreate()
 
 
@@ -60,9 +56,6 @@ Writing Streaming
 ========================================================================================
 """
 
-
-#save_to_cassandra(stats_by_class_year_week, "stats_by_class_year_week")
-#save_to_cassandra(stats_by_year_week, "stats_by_year_week")
 
 save_to_postgres(stats_by_class_year_week, "stats_by_class_year_week", POSTGRES_PROPERTIES)
 

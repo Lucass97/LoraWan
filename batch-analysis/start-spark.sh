@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SPARK_PACKAGES="org.postgresql:postgresql:42.7.5,com.datastax.spark:spark-cassandra-connector_2.12:3.5.1,com.github.jnr:jnr-posix:3.1.20,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3"
+SPARK_PACKAGES="org.postgresql:postgresql:42.7.5,com.github.jnr:jnr-posix:3.1.20"
 BASE_PATH="/opt/bitnami/spark/spark"
 SCRIPT_NAME="start-spark.py"
 LOCAL_ENV_PATH="../env/spark.env"
