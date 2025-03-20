@@ -1,12 +1,12 @@
 from pyspark.sql.functions import avg, max, min, stddev, year, weekofyear
 
 
-def define_aggregation_statistics()-> list:
+def define_aggregation_statistics() -> list:
     """
-    Definisce le statistiche di aggregazione per le colonne specificate.
+    Defines aggregation statistics for the specified columns.
 
     Returns:
-        list: Una lista di espressioni di aggregazione.
+        list: A list of aggregation expressions.
     """
     agg_stats = [
         avg("temperature").alias("avg_temperature"),
@@ -40,14 +40,14 @@ def define_aggregation_statistics()-> list:
 
 def aggregate_by_year_week(df, agg_stats):
     """
-    Raggrega i dati per anno e settimana.
+    Aggregates data by year and week.
 
     Args:
-        df (DataFrame): Il DataFrame di input.
-        agg_stats (list): Una lista di espressioni di aggregazione.
+        df (DataFrame): The input DataFrame.
+        agg_stats (list): A list of aggregation expressions.
 
     Returns:
-        DataFrame: Un DataFrame aggregato per anno e settimana.
+        DataFrame: A DataFrame aggregated by year and week.
     """
     stats_by_year_week = df.groupBy(
         year("sendtime").alias("year"), weekofyear("sendtime").alias("week")
@@ -58,14 +58,14 @@ def aggregate_by_year_week(df, agg_stats):
 
 def aggregate_by_class_year_week(df, agg_stats):
     """
-    Raggrega i dati per classe, anno e settimana.
+    Aggregates data by classroom, institute, year, and week.
 
     Args:
-        df (DataFrame): Il DataFrame di input.
-        agg_stats (list): Una lista di espressioni di aggregazione.
+        df (DataFrame): The input DataFrame.
+        agg_stats (list): A list of aggregation expressions.
 
     Returns:
-        DataFrame: Un DataFrame aggregato per classe, anno e settimana.
+        DataFrame: A DataFrame aggregated by classroom, institute, year, and week.
     """
     stats_by_class_year_week = df.groupBy(
         "classroom",
@@ -74,5 +74,4 @@ def aggregate_by_class_year_week(df, agg_stats):
         weekofyear("sendtime").alias("week"),
     ).agg(*agg_stats)
 
-    
     return stats_by_class_year_week
