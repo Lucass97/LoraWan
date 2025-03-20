@@ -3,7 +3,7 @@
 from pyspark.sql import SparkSession
 
 from processing.processing import *
-from misc.env import load_environment
+from commons.misc.env import load_environment
 from misc.parser import parse_batch_args
 
 args = parse_batch_args()

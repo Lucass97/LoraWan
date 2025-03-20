@@ -4,8 +4,9 @@ SPARK_PACKAGES="org.postgresql:postgresql:42.7.5,com.datastax.spark:spark-cassan
 BASE_PATH="/opt/bitnami/spark/spark"
 SCRIPT_NAME="start-spark.py"
 LOCAL_ENV_PATH="../env/spark.env"
-DOCKER_ENV_PATH="${BASE_PATH}/spark.env" 
+DOCKER_ENV_PATH="${BASE_PATH}/spark.env"
 COMMON_FUNCTIONS_PATH="../scripts/spark_functions.sh"
+COMMONS_PACKAGE="../commons"
 SCRIPT_PATH="$BASE_PATH/$SCRIPT_NAME"
 
 BACKGROUND_EXEC="false"
@@ -28,4 +29,5 @@ ensure_folder_exists "$BASE_PATH"
 clear_folder "$BASE_PATH"
 copy_env_file "$LOCAL_ENV_PATH" "$DOCKER_ENV_PATH"
 copy_files "." "$BASE_PATH"
+copy_files "$COMMONS_PACKAGE" "$BASE_PATH" # Copy commons python library
 submit_spark_job "$SPARK_PACKAGES" "$SCRIPT_PATH" "$BACKGROUND_EXEC" "$DOCKER_ENV_PATH"
