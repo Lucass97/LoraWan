@@ -29,5 +29,6 @@ ensure_folder_exists "$BASE_PATH"
 clear_folder "$BASE_PATH"
 copy_env_file "$LOCAL_ENV_PATH" "$DOCKER_ENV_PATH"
 copy_files "." "$BASE_PATH"
+COMMONS_PACKAGE="../commons"
 copy_files "$COMMONS_PACKAGE" "$BASE_PATH" # Copy commons python library
 submit_spark_job "$SPARK_PACKAGES" "$SCRIPT_PATH" "$BACKGROUND_EXEC" "$DOCKER_ENV_PATH"
