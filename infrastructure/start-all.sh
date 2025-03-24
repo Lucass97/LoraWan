@@ -9,7 +9,6 @@ NC="\033[0m"
 compose_files=(
     'hadoop/docker-compose.yml'
     'spark/docker-compose.yml'
-    'storage/cassandra/docker-compose.yml'
     'storage/influxdb/docker-compose.yml'
     'storage/postgres/docker-compose.yml'
     'ingestion/kafka/docker-compose.yml'
@@ -106,4 +105,3 @@ create_docker_network
 start_services
 start_server_proxy
 create_hdfs_directories
-init_cassandra_db "storage/cassandra/create-db.sh"

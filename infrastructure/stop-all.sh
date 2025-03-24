@@ -9,28 +9,10 @@ NC="\033[0m"
 compose_files=(
     'hadoop/docker-compose.yml'
     'spark/docker-compose.yml'
-    'storage/cassandra/docker-compose.yml'
     'storage/influxdb/docker-compose.yml'
     'ingestion/kafka/docker-compose.yml'
 )
 
-
-# Function to delete Cassandra volumes
-delete_cassandra_volumes() {
-    read -p "$(echo -e "${YELLOW}Do you want to delete the Cassandra volumes? [y/N] ${NC}")" confirm
-    confirm=$(echo "$confirm" | tr '[:upper:]' '[:lower:]')
-    if [[ "$confirm" == "y" || "$confirm" == "yes" ]]; then
-        echo -e "${YELLOW}Deleting Cassandra volumes...${NC}"
-        sudo docker volume rm cassandra_cassandra1-data cassandra_cassandra2-data cassandra_cassandra3-data
-        if [ $? -ne 0 ]; then
-            echo -e "${RED}Error deleting Cassandra volumes${NC}"
-            exit 1
-        fi
-        echo -e "${GREEN}Cassandra volumes deleted successfully!${NC}"
-    else
-        echo -e "${GREEN}Cassandra volumes not deleted.${NC}"
-    fi
-}
 
 # Function to delete Hadoop volumes
 delete_hadoop_volumes() {
@@ -99,6 +81,5 @@ stop_and_remove_server_proxy() {
 
 stop_services
 stop_and_remove_server_proxy
-delete_cassandra_volumes
 delete_hadoop_volumes
 delete_influxdb_volumes
