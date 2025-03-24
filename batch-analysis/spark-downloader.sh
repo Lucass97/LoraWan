@@ -6,7 +6,9 @@ SCRIPT_NAME="spark-downloader.py"
 LOCAL_ENV_PATH="../env/spark.env"
 DOCKER_ENV_PATH="${BASE_PATH}/spark.env" 
 COMMON_FUNCTIONS_PATH="../scripts/spark_functions.sh"
+COMMONS_PACKAGE="../commons"
 SCRIPT_PATH="$BASE_PATH/$SCRIPT_NAME"
+CONTAINER_LOCAL_PATH=/opt/bitnami/spark/iot-lorawan/raw/indoor_sensor_data.csv
 
 BACKGROUND_EXEC="false"
 
@@ -41,5 +43,6 @@ ensure_folder_exists "$BASE_PATH"
 clear_folder "$BASE_PATH"
 copy_env_file "$LOCAL_ENV_PATH" "$DOCKER_ENV_PATH"
 copy_files "." "$BASE_PATH"
-submit_spark_job "$SPARK_PACKAGES" "$SCRIPT_PATH" "$BACKGROUND_EXEC" "$DOCKER_ENV_PATH" --profile iaq
-copy_from_container "/opt/bitnami/spark/iot-lorawan/raw/indoor_sensor_data.csv" "../data/raw/"
+copy_files "$COMMONS_PACKAGE" "$BASE_PATH" # Copy commons python library
+submit_spark_job "$SPARK_PACKAGES" "$SCRIPT_PATH" "$BACKGROUND_EXEC" "$DOCKER_ENV_PATH" --profile iaq --local-path $CONTAINER_LOCAL_PATH
+copy_from_container "$CONTAINER_LOCAL_PATH" "../data/raw/"
