@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
-from pyspark.sql import SparkSession
 from influxdb_client import InfluxDBClient
+from pyspark.sql import SparkSession
 
-from storage.influxdb import *
-from processing.processing import *
+from commons.misc.env import load_environment
 from misc.parser import parse_args
-from misc.env import load_environment
+from processing.processing import *
+from storage.influxdb import *
+
 
 args = parse_args()
 
@@ -16,10 +17,7 @@ load_environment(args.env_file)
 # Initialize the SparkSession
 spark = SparkSession \
     .builder \
-    .appName("LoraWan") \
-    .config("spark.cassandra.connection.host", ','.join(CASSANDRA_CLUSTERS)) \
-    .config("spark.cassandra.auth.username", CASSANDRA_USERNAME) \
-    .config("spark.cassandra.auth.password", CASSANDRA_PASSWORD) \
+    .appName("IoT-LoraWAN Streaming Analysis") \
     .getOrCreate()
 
 
@@ -70,13 +68,6 @@ df_correlations = compute_correlations(df_stream=df_stream, window_duration=WIND
 Writing Streaming
 ========================================================================================
 """
-
-"""df_stream \
-    .writeStream \
-    .outputMode("append") \
-    .foreachBatch(lambda batch_df, batch_id: batch_df.show(100)) \
-    .start() \
-    .awaitTermination()"""
 
 
 # Write raw data on HDFS

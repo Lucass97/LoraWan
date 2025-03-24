@@ -5,11 +5,12 @@ The Streaming Package provides a robust pipeline for real-time sensor data proce
 ## Table of Contents
 
 - [Streaming Pipeline](#streaming-pipeline)
-  - [Analysis Phase](#1-analysis-phase)
-  - [Writing Phase](#2-writing-phase)
+  - [1. Analysis Phase](#1-analysis-phase)
+  - [2. Writing Phase](#2-writing-phase)
 - [Requirements](#requirements)
   - [Infrastructure Prerequisites](#infrastructure-prerequisites)
   - [Data Prerequisites](#data-prerequisites)
+  - [Environment Variables](#environment-variables)
 - [Execute Pipeline](#execute-pipeline)
 
 
@@ -74,6 +75,12 @@ The system requires metadata about educational institutions (sensor installation
 
 This script will populate Hadoop with the necessary institution information that the streaming pipeline requires for data processing and analysis.
 
+### Environment Variables
+
+Certain environment variables are required for all Spark jobs within the project. These variables are defined in the [(`env/spark.env`)](../env/spark.env) file and must be sourced for proper configuration. 
+
+It is highly recommended to review the [(`env/README.md`)](../env/README.md) file to ensure that the environment variables are correctly configured for all Spark-related tasks in the project.
+
 ## Execute pipeline
 
 The streaming application can be controlled through two shell scripts that handle the start and stop operations.
@@ -97,4 +104,5 @@ The streaming application can be controlled through two shell scripts that handl
     ```
     This script safely stops the running Spark streaming job by cleaning up resources and terminating the processes on the Spark master container.
 
-> Note: Both scripts include status messages to indicate the progress and result of their operations. Any errors during execution will be clearly displayed with appropriate error messages.
+> #### Notes: 
+> 1. Both scripts include status messages to indicate the progress and result of their operations. Any errors during execution will be clearly displayed with appropriate error messages.
